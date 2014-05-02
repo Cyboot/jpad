@@ -1,5 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -12,6 +14,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
@@ -69,10 +72,33 @@ public class GuiTest extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
-		JPanel innerLeftPannel = new JPanel();
+		JPanel innerLeftPannel = new JPanel() {
+			@Override
+			protected void paintComponent(Graphics g) {
+				// g.setColor(BLUE_DARK);
+				//
+				// int width = 50;
+				// int x1 = 5;
+				// int y1 = 5;
+				// int x2 = 5 + width + 20;
+				// int y2 = 5;
+				// g.fillRect(x1, y1, width, width);
+				// g.fillRect(x2, y2, width, width);
+			}
+		};
+		innerLeftPannel.setLayout(new GridLayout(5, 4, 5, 5));
+
+		for (int i = 0; i < 20; i++) {
+			JLabel label = new JLabel(i + "", SwingConstants.CENTER);
+			label.setBackground(BLUE_DARK);
+			label.setOpaque(true);
+			innerLeftPannel.add(label);
+		}
+
 		innerLeftPannel.setBorder(LineBorder.createGrayLineBorder());
+
 		JPanel innerRightPannel = new JPanel();
-		innerRightPannel.setBorder(LineBorder.createBlackLineBorder());
+		innerRightPannel.setBorder(LineBorder.createGrayLineBorder());
 
 		panel.add(innerLeftPannel);
 		panel.add(innerRightPannel);
