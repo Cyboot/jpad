@@ -1,9 +1,9 @@
 package de.timweb.jpad.listener;
 
 import de.timweb.jpad.core.Gamepad;
-import de.timweb.jpad.core.GamepadListener;
 import de.timweb.jpad.core.Gamepad.Button;
 import de.timweb.jpad.core.Gamepad.Stick;
+import de.timweb.jpad.core.GamepadListener;
 
 public class DummyListener implements GamepadListener {
 

@@ -1,7 +1,12 @@
 package de.timweb.jpad.core;
 
+import java.awt.event.InputEvent;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controller;
@@ -13,6 +18,7 @@ public class GamepadManager {
 
 	private static Gamepad					gamepad;
 	private static List<GamepadListener>	listeners	= new ArrayList<>();
+	private static Properties				props;
 
 
 	private static void checkInit() {
@@ -21,8 +27,11 @@ public class GamepadManager {
 
 		try {
 			Controllers.create();
+			props = new Properties();
+			props.load(new BufferedInputStream(new FileInputStream("default.cfg")));
+
 			isInit = true;
-		} catch (LWJGLException e) {
+		} catch (LWJGLException | IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -89,5 +98,25 @@ public class GamepadManager {
 
 	public static void setTargetGamepad(final String gamepadName) {
 		GamepadManager.gamepadName = gamepadName;
+	}
+
+	/**
+	 * returns the mapping from the cfg-file
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public static int getMapping(String key) {
+		String value = props.getProperty(key).toUpperCase();
+
+		if (value.length() == 1)
+			return value.charAt(0);
+		else if ("MOUSE_LEFT".equals(value.toUpperCase()))
+			return InputEvent.BUTTON1_DOWN_MASK;
+		else if ("MOUSE_RIGHT".equals(value.toUpperCase()))
+			return InputEvent.BUTTON2_DOWN_MASK;
+		else if ("MOUSE_MIDDLE".equals(value.toUpperCase()))
+			return InputEvent.BUTTON3_DOWN_MASK;
+		return Integer.MIN_VALUE;
 	}
 }

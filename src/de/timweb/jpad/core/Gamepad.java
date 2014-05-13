@@ -8,10 +8,10 @@ public class Gamepad {
 	public static final String	LEFT_STICK	= "Left Stick";
 	public static final String	RIGHT_STICK	= "Right Stick";
 
-	private String				name;
-	private Stick				stickLeft	= new Stick(LEFT_STICK);
-	private Stick				stickRight	= new Stick(RIGHT_STICK);
-	private Button[]			buttons;
+	private final String		name;
+	private final Stick			stickLeft	= new Stick(LEFT_STICK);
+	private final Stick			stickRight	= new Stick(RIGHT_STICK);
+	private final Button[]		buttons;
 
 	public Gamepad() {
 		this("DefaultGamepad");
@@ -27,10 +27,18 @@ public class Gamepad {
 	}
 
 	void update(final Controller controller) {
-		stickLeft.valueX = controller.getAxisValue(1);
-		stickLeft.valueY = controller.getAxisValue(0);
-		stickRight.valueX = controller.getAxisValue(3);
-		stickRight.valueY = controller.getAxisValue(2);
+		if (name.contains("ps3")) {
+			stickRight.valueX = controller.getAxisValue(1);
+			stickRight.valueY = controller.getAxisValue(0);
+			stickLeft.valueX = controller.getAxisValue(3);
+			stickLeft.valueY = controller.getAxisValue(2);
+		} else {
+			stickLeft.valueX = controller.getAxisValue(1);
+			stickLeft.valueY = controller.getAxisValue(0);
+			stickRight.valueX = controller.getAxisValue(3);
+			stickRight.valueY = controller.getAxisValue(2);
+		}
+
 
 		for (int i = 0; i < controller.getButtonCount(); i++) {
 			buttons[i].name = controller.getButtonName(i);
@@ -56,7 +64,8 @@ public class Gamepad {
 
 	@Override
 	public String toString() {
-		return stickLeft.toString() + ", " + stickRight.toString() + ", " + Arrays.toString(buttons);
+		return stickLeft.toString() + ", " + stickRight.toString() + ", "
+				+ Arrays.toString(buttons);
 	}
 
 	public static class Stick {

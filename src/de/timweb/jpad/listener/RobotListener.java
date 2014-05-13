@@ -5,24 +5,37 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.timweb.jpad.core.Gamepad;
-import de.timweb.jpad.core.GamepadListener;
 import de.timweb.jpad.core.Gamepad.Button;
 import de.timweb.jpad.core.Gamepad.Stick;
+import de.timweb.jpad.core.GamepadListener;
+import de.timweb.jpad.core.GamepadManager;
 
 public class RobotListener implements GamepadListener {
 
-	private boolean	mouseLeftDown	= false;
-	private boolean	mouseRightDown	= false;
+	private boolean						mouseLeftDown	= false;
+	private boolean						mouseRightDown	= false;
 
-	private double	moveX			= 0;
-	private double	moveY			= 0;
+	private double						moveX			= 0;
+	private double						moveY			= 0;
 
-	private Robot	robot;
+	private Robot						robot;
+
+	private final Map<Integer, Integer>	mapping;
 
 	public RobotListener() {
+		mapping = new HashMap<>();
+
+		for (int i = 0; i < 20; i++) {
+			int value = GamepadManager.getMapping("button." + i);
+			if (value != Integer.MIN_VALUE) {
+				mapping.put(i, value);
+			}
+		}
+
 		try {
 			robot = new Robot();
 		} catch (AWTException e) {
@@ -53,20 +66,20 @@ public class RobotListener implements GamepadListener {
 		float y = gamepad.getStickLeft().getValueY();
 
 		if (x < -0.5) {
-			robot.keyPress(KeyEvent.VK_A);
+			robot.keyPress(GamepadManager.getMapping("axis.left.xmin"));
 		} else if (x > 0.5) {
-			robot.keyPress(KeyEvent.VK_D);
+			robot.keyPress(GamepadManager.getMapping("axis.left.xmax"));
 		} else {
-			robot.keyRelease(KeyEvent.VK_A);
-			robot.keyRelease(KeyEvent.VK_D);
+			robot.keyRelease(GamepadManager.getMapping("axis.left.xmin"));
+			robot.keyRelease(GamepadManager.getMapping("axis.left.xmax"));
 		}
 		if (y < -0.5) {
-			robot.keyPress(KeyEvent.VK_W);
+			robot.keyPress(GamepadManager.getMapping("axis.left.ymin"));
 		} else if (y > 0.5) {
-			robot.keyPress(KeyEvent.VK_S);
+			robot.keyPress(GamepadManager.getMapping("axis.left.ymax"));
 		} else {
-			robot.keyRelease(KeyEvent.VK_W);
-			robot.keyRelease(KeyEvent.VK_S);
+			robot.keyRelease(GamepadManager.getMapping("axis.left.ymin"));
+			robot.keyRelease(GamepadManager.getMapping("axis.left.ymax"));
 		}
 	}
 
@@ -81,6 +94,16 @@ public class RobotListener implements GamepadListener {
 			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 			mouseLeftDown = false;
 			System.out.println("Left Mouse Released");
+		}
+		if (gamepad.isPressed(4) && !mouseRightDown) {// L1 = right click
+			robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
+			mouseRightDown = true;
+			System.out.println("Right Mouse Clicked");
+		}
+		if (!gamepad.isPressed(4) && mouseRightDown) {
+			robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
+			mouseRightDown = false;
+			System.out.println("Right Mouse Released");
 		}
 	}
 
